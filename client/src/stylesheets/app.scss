@@ -1,0 +1,39 @@
+@charset 'utf-8';
+//*------------------------------------*\
+//    #FRAMEWORK MIXINS
+//\*------------------------------------*/
+// @import './../../node_modules/uikit/src/scss/mixins';
+
+//*------------------------------------*\
+//    #SETTINGS
+//\*------------------------------------*/
+
+
+//\*------------------------------------*/
+@import './../../node_modules/uikit/src/scss/variables-theme.scss';
+@import './../../node_modules/uikit/src/scss/mixins-theme';
+
+// @import './settings/variables';
+///*------------------------------------*\
+//    #FRAMEWORK OVERRIDES/TEMPLATE
+//\*------------------------------------*/
+@import "./../../node_modules/uikit/src/scss/uikit-theme";
+
+///*------------------------------------*\
+//    #COMPONENTS
+//\*------------------------------------*/
+
+///*------------------------------------*\
+//    #THIRD PARTY
+//\*------------------------------------*/
+#breadcrumbs ul{
+  padding: 0;
+  margin: 0;
+}
+
+.fade-enter-active, .fade-leave-active {
+    transition: opacity .5s
+  }
+  .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+    opacity: 0
+  }
