@@ -1,19 +1,19 @@
 <template lang="pug">
 section
-    ul( uk-tab)
-        li
-            a( href="#") Settings
+    ul( uk-tab="animation: uk-animation-fade")
         li
             a( href="#") Form
+        li
+            a( href="#") Settings
         li
             a( href="#") Entries
 
 
     ul.uk-switcher
         li
-            settings( :form-settings="payload.formSettings", :form-fields="payload.formFields")
-        li
             vue-form( :form-items="payload.formFields")
+        li
+            settings( :form-settings="payload.formSettings", :form-items="payload.formFields")
         li
             entries
 </template>

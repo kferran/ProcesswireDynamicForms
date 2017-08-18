@@ -28,7 +28,6 @@ export default {
     },
     mounted(){
         axios.get('/admin/setup/dynamicforms/getforms').then((response) => {
-            console.log(response.data)
             // this.rows.push(response.data)
             response.data.forEach((item) => {
                 this.rows.push(item)

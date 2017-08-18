@@ -16,8 +16,8 @@ div
 								|  {{component.label}}
 
 			div.uk-width-3-4
-				section.uk-card.uk-card-body.uk-card-small.uk-card-default
-					draggable.uk-list.uk-list-divider(
+				section
+					draggable(
 						v-if="formItems"
 						element='ul',
 						data-collapsible='accordion',
@@ -30,17 +30,18 @@ div
 						@end='isDragging=false',
 						data-content='Drag and drop your fields here'
 					)
-						li(
+						li.uk-card.uk-card-small.uk-card-default.uk-card-body(
 							v-for='(item, index) in formItems',
 							:key='index'
 						)
-							div.uk-accordion-title.collapsible-header
-								i(:class='getIcon(item.type)')
-								|  {{item.label}}
-								i.fa.fa-trash-o.fa-lg(
+							div.uk-accordion-title.collapsible-header.uk-position-relative
+								//- i(:class='getIcon(item.type)') &nbsp;
+								i.fa.fa-trash-o.fa-lg.uk-position-absolute(
+									style="right:35px; top:5px; margin:auto;"
 									@click.stop='destroy(index)',
 									aria-hidden='true'
 								)
+								|  {{item.label}}
 
 							div.uk-accordion-content.collapsible-body
 								div.uk-form.uk-form-stacked
@@ -48,9 +49,14 @@ div
 										label(:for="item.name + '-required'")
 											input.uk-checkbox(type='checkbox', :id="item.name + '-required'", :checked='item.required', @click.stop='item.required = !item.required')
 											|  Required
+
 									div.uk-margin
 										label.uk-form-label(:for="item.name + '-label'") Label
 										input.uk-input(:id="item.name + '-label'", type='text', v-model='item.label')
+
+									div.uk-margin
+										label.uk-form-label(:for="item.name + '-reference'") Name: (a simple to use reference name for this field)
+										input.uk-input(:id="item.name + '-label'", type='text', v-model='item.reference')
 
 									div(v-if="['text', 'password', 'email'].includes(item.type)")
 										div.uk-margin
@@ -61,23 +67,24 @@ div
 										div.uk-margin
 											label.uk-form-label Width
 											div.uk-margin.uk-grid-small.uk-child-width-auto.uk-grid
-												label
+												label( v-for="width in widths")
 													input.uk-radio(
 														type="radio"
 														:name="item.name+ '-width'"
 														value="uk-width-1-1"
-														v-model="item.width"
+														v-model="width.value"
 													)
-													| 100%
-												label
-													input.uk-radio( type="radio" :name="item.name+ '-width'" value="uk-width-1-2" v-model="item.width")
-													| 50%
+													|  {{ width.label}}
 
 									div(v-if="['checkbox-group', 'radio-group', 'select'].includes(item.type)")
 										label.uk-form-label Values
-										draggable.uk-card.uk-card-body.uk-background-muted(element='div', :list='item.values', :options="{group:{name:'item.values'}}" )
+										draggable.uk-card.uk-card-body.uk-background-muted(
+											element='div',
+											:list='item.values',
+											:options="{group:{name:'item.values'}}"
+										)
 											div(
-												class="uk-grid uk-child-width-1-2@s uk-child-width-1-3@m"
+												class="uk-grid uk-child-width-1-2@s uk-child-width-1-3@m uk-flex-middle"
 												v-for='(option, index) in item.values',
 												:key='index'
 											)
@@ -89,10 +96,11 @@ div
 													label.uk-form-label(:for="'option-value-' + index") Value
 													input.uk-input(:id="'option-value-' + index", type='text', v-model='option.value')
 
-												div.uk-margin(v-if='item.values.length > 2')
+												div(v-if='item.values.length > 2')
 													i.fa.fa-times(@click.stop='removeOption(item.values, index)')
 										div.uk-margin
 											a( @click.stop='addOption(item.values)') Add option
+
 
 
 		div.uk-section.uk-section-small.uk-text-right
@@ -113,6 +121,12 @@ export default {
 	data () {
 		return {
 			components: fieldTypes.components,
+			widths: [
+				{ 'label': '100%', 'value': 'uk-width-1-1'},
+				{ 'label': '1/2', 'value': 'uk-width-1-2'},
+				{ 'label': '1/3', 'value': 'uk-width-1-3'},
+				{ 'label': '1/4', 'value': 'uk-width-1-4'},
+			],
 			optionType: [
 			{
 				label: "Text",
@@ -151,7 +165,8 @@ export default {
 		},
 		onClone (el) {
 			var input = JSON.parse(JSON.stringify(el));
-			input.name = input.type + '-' + Date.now();
+			// input.name = input.type + '-' + Date.now();
+			input.name = input.type + '-' + input.reference;
 			input.fixed = false;
 			input.required = false;
 			input.description = '';
@@ -252,7 +267,9 @@ export default {
 	}
 
 	.uk-accordion-title{
-
-
+		font-size:16px;
+	}
+	.uk-card-small{
+		padding: 10px !important;
 	}
 </style>

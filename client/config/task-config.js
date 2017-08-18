@@ -5,7 +5,7 @@ module.exports = {
 	static      : false,
 	svgSprite   : false,
 	ghPages     : false,
-	stylesheets : true,
+	stylesheets : false,
 
 	javascripts: {
 		entry: {

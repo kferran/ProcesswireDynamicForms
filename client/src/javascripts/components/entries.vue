@@ -6,15 +6,14 @@ section
         :rows="rows"
         :paginate="true"
         :lineNumbers="true"
-        :globalSearch="true"
-        styleClass="table table-stripped uk-table uk-table-divider uk-table-striped uk-table-hover uk-table-small"
+        styleClass="uk-table uk-table-divider uk-table-striped uk-table-hover uk-table-small"
     )
         template( slot="table-row" scope="props")
-            td 
+            td
                 router-link(
                     to="/form"
                 ) Edit
-            td {{ props.row.name }}            
+            td {{ props.row.name }}
 </template>
 
 <script>

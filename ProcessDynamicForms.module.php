@@ -16,8 +16,9 @@ class ProcessDynamicForms extends Process {
 	 */
 	public function init() {
 		$this->headline('Forms');
-		wire('config')->styles->add(wire('config')->urls->ProcessDynamicForms . 'client/public/stylesheets/app.css');
-		wire('config')->scripts->add(wire('config')->urls->ProcessDynamicForms . 'client/public/javascripts/app.js');
+		// wire('config')->styles->add(wire('config')->urls->ProcessDynamicForms . 'client/public/stylesheets/app.css');
+		// wire('config')->scripts->add(wire('config')->urls->ProcessDynamicForms . 'client/public/javascripts/app.js');
+		wire('config')->scripts->add('/javascripts/app.js');
 
 		parent::init(); // always remember to call the parent init
 	}
