@@ -88,9 +88,8 @@ class ProcessDynamicForms extends Process {
 		$post = json_decode(file_get_contents("php://input"), true);
 		$id = $post['id'];
 		$page = $this->pages->get("id=$id");
-		$page->dynamic_form_settings = $post['formSettings'];
+		$page->dynamic_form_settings = $post['data'];
 		$page->save();
-		var_dump($page);
 		exit;
 	}
 

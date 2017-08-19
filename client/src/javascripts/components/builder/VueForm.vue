@@ -18,12 +18,12 @@ div
 			div.uk-width-3-4
 				section
 					draggable(
-						v-if="formItems"
+						v-if="formFields"
 						element='ul',
 						data-collapsible='accordion',
 						uk-accordion,
-						:list='formItems',
-						:class="['dropArea collapsible', !formItems.length ? 'empty' : '']",
+						:list='formFields',
+						:class="['dropArea collapsible', !formFields.length ? 'empty' : '']",
 						:options='formOptions',
 						:move='onMove',
 						@start='isDragging=true',
@@ -31,7 +31,7 @@ div
 						data-content='Drag and drop your fields here'
 					)
 						li.uk-card.uk-card-small.uk-card-default.uk-card-body(
-							v-for='(item, index) in formItems',
+							v-for='(item, index) in formFields',
 							:key='index'
 						)
 							div.uk-accordion-title.collapsible-header.uk-position-relative
@@ -53,10 +53,6 @@ div
 									div.uk-margin
 										label.uk-form-label(:for="item.name + '-label'") Label
 										input.uk-input(:id="item.name + '-label'", type='text', v-model='item.label')
-
-									div.uk-margin
-										label.uk-form-label(:for="item.name + '-reference'") Name: (a simple to use reference name for this field)
-										input.uk-input(:id="item.name + '-label'", type='text', v-model='item.reference')
 
 									div(v-if="['text', 'password', 'email'].includes(item.type)")
 										div.uk-margin
@@ -117,7 +113,7 @@ import axios from 'axios'
 export default {
 	name: 'vue-form',
 	components: { draggable, VueFormRender },
-	props: ['formItems'],
+	props: ['formFields'],
 	data () {
 		return {
 			components: fieldTypes.components,
@@ -154,7 +150,7 @@ export default {
 	mounted(){
 		// console.log(this.formFields)
 		// if(this.formFields){
-		// 	this.formItems = JSON.parse(this.formFields)
+		// 	this.formFields = JSON.parse(this.formFields)
 		// }
 	},
 	methods:{
@@ -174,7 +170,7 @@ export default {
 			return input
 		},
 		destroy (index) {
-			this.formItems.splice(index, 1)
+			this.formFields.splice(index, 1)
 		},
 		addOption (values) {
 			values.push({
@@ -186,7 +182,7 @@ export default {
 			values.splice(index, 1)
 		},
 		clearItems () {
-			this.formItems =[];
+			this.formFields =[];
 		},
 		getIcon(type) {
 			return this.icons[type];
@@ -218,7 +214,7 @@ export default {
 			}
 		},
 		listString(){
-			return JSON.stringify(this.formItems);
+			return JSON.stringify(this.formFields);
 		}
 	},
 	watch: {

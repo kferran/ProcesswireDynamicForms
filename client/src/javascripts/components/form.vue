@@ -11,9 +11,15 @@ section
 
     ul.uk-switcher
         li
-            vue-form( :form-items="payload.formFields")
+            vue-form(
+                v-if="payload.formFields"
+                :form-fields="payload.formFields"
+            )
         li
-            settings( :form-settings="payload.formSettings", :form-items="payload.formFields")
+            settings(
+                v-if="payload.formSettings"
+                :form-settings="payload.formSettings", :form-fields="payload.formFields"
+            )
         li
             entries
 </template>
@@ -38,7 +44,7 @@ export default {
     mounted(){
         axios.post("/admin/setup/dynamicforms/getform?id=" + this.$route.params.id).then((response) => {
             this.payload.formFields = JSON.parse(response.data.formFields)
-            this.payload.formSettings = JSON.parse(response.data.formSettings)
+            this.payload.formSettings = response.data.formSettings.length ? JSON.parse(response.data.formSettings) : {}
         })
     }
 }
