@@ -1,5 +1,6 @@
 <?php
 
+require_once __DIR__ .'/FormProcessor.php';
 /**
  * Dynamic Forms Process Module
  */
@@ -16,9 +17,8 @@ class ProcessDynamicForms extends Process {
 	 */
 	public function init() {
 		$this->headline('Forms');
-		// wire('config')->styles->add(wire('config')->urls->ProcessDynamicForms . 'client/public/stylesheets/app.css');
-		// wire('config')->scripts->add(wire('config')->urls->ProcessDynamicForms . 'client/public/javascripts/app.js');
-		wire('config')->scripts->add('/javascripts/app.js');
+		wire('config')->scripts->add(wire('config')->urls->ProcessDynamicForms . 'client/public/javascripts/app.js');
+		// wire('config')->scripts->add('/javascripts/app.js');
 
 		parent::init(); // always remember to call the parent init
 	}
@@ -34,8 +34,6 @@ class ProcessDynamicForms extends Process {
 		$markup = $this->modules->get('InputfieldMarkup');
         $markup->value = '<div id="dynamic-forms"></div>';
         return $markup->render();
-
-		return $out;
 	}
 
 	public function ___executeGetForms(){
@@ -49,28 +47,30 @@ class ProcessDynamicForms extends Process {
 		}
 		echo json_encode($response);
 		exit;
-		return;
 	}
 
 	public function  ___executeGetForm(){
 		if(!$formId = $this->input->get->id){
 			exit;
 		}
+
 		$page = $this->pages->get("id=$formId");
 		$entries = [];
 		if($page->hasChildren()) {
 			foreach ($page->children() as $entry) {
+				$formEntry = json_decode($entry->dynamic_form_entry);
 				$entries[] = [
 					'title' => $entry->title,
-					'id' => $entry->id
+					'id' => $entry->id,
+					'fields' => $formEntry->formFields
 				];
 			}
 		}
 
 		echo json_encode([
-			'formSettings' => $page->dynamic_form_settings ? $page->dynamic_form_settings : [],
-			'formFields' => $page->dynamic_form_fields ? $page->dynamic_form_fields : [],
-			'entries' => $entries,
+			'formSettings' => $page->dynamic_form_settings ? json_decode($page->dynamic_form_settings) : [],
+			'formFields' => $page->dynamic_form_fields ? json_decode($page->dynamic_form_fields) : [],
+			'formEntries' => $entries,
 		]);
 		exit;
 	}
@@ -86,12 +86,110 @@ class ProcessDynamicForms extends Process {
 
 	public function ___executeSaveFormSettings(){
 		$post = json_decode(file_get_contents("php://input"), true);
-		$id = $post['id'];
+		$id = $post['formId'];
 		$page = $this->pages->get("id=$id");
 		$page->dynamic_form_settings = $post['data'];
 		$page->save();
 		exit;
 	}
+
+	public function ___executeSaveForm(){
+		$post = json_decode(file_get_contents("php://input"), true);
+		$p = new \Processwire\Page();
+		$title = $post['form']['formName'];
+        $p->template 			= $this->templates->get('dynamic_form_entry');;
+	    $p->parent 				= $this->pages->get('/admin/setup/dynamicforms/');
+        $p->title = $title;
+        $p->name = $this->sanitizer->pageName( time() . $title );
+		$p->save();
+		echo json_encode(['formId' => $p->id]);
+		exit;
+	}
+
+	public function ___executeDeleteForm(){
+		$post = json_decode(file_get_contents("php://input"), true);
+		$form = $this->pages->get($post['formId']);
+		$this->pages->delete($form);
+		exit;
+	}
+
+	public function store($data){
+		$this->formTemplate = $this->pages->get("id={$data['formTemplateId']}");
+
+		if($data['formSettings']){
+			$this->emailSubject = $data['formSettings']['subject'];
+
+			if($data['formSettings']['to']){
+				$this->emailTo = $data['formSettings']['to'];
+			}
+
+			if($data['formSettings']['from']){
+				$this->emailFrom = $data['formSettings']['from'];
+			}
+
+			foreach ($data['formSettings']['conditionalTos'] as $to) {
+				foreach ($data['formFields'] as $field) {
+					if($field['label'] == 'Email Address'){
+						$this->emailFrom = $field['value'];
+					}
+
+					if($field['label'] == $to['field'] && $to['value'] == $field['value']){
+						$this->emailTo = $to['to'];
+					}
+				}
+			}
+		}
+
+		$this->saveFormSubmission($data);
+	}
+
+	public function saveFormSubmission($data){
+		// Validate
+		foreach ($data['formFields'] as $index => $field) {
+            if(isset($field['value'])){
+				$field['value'] = $this->sanitizer->text($field['value'], ['maxLength' => 16384]);
+			}
+		}
+
+		// Save Page
+		$p = new \Processwire\Page();
+	    $title 					= sprintf("%s %s", $this->formTemplate->title, " Submission");
+        $p->template 			= $this->templates->get('dynamic_form_entry');;
+	    $p->parent 				= $this->formTemplate;
+        $p->dynamic_form_entry = json_encode($data);
+        $p->title = $title;
+        $p->name = $this->sanitizer->pageName( time() . $title );
+
+		$p->save();
+
+		// Send Email
+		$this->sendEmail($data);
+
+		// Success
+		echo 'success';
+		exit;
+	}
+
+	public function sendEmail($data){
+        $template = $this->template($data);
+        $mail = new WireMail();
+        $mail->to($this->emailTo);
+        $mail->from($this->emailFrom);
+        $mail->subject($this->emailSubject);
+        $mail->bodyHTML($template);
+        $mail->send();
+	}
+
+	public function template($data){
+        $templateContent = "";
+        foreach ($data['formFields'] as $field) {
+			if(isset($field['label']) && isset($field['value'])){
+				$templateContent .= "<p><strong>{$field['label']}</strong> {$field['value']}</p>";
+			}
+        }
+
+        return str_replace("{{content}}", $templateContent, file_get_contents(__DIR__ . '/email/template.html') );
+    }
 
 	/**
 	 * Called only when your module is installed

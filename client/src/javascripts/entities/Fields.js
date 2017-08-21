@@ -1,5 +1,5 @@
-export default {
-    components: [
+export default{
+    fieldTypes: [
         { label: "Checkbox", type: "checkbox" },
         { label: "Text field", type: "text", },
         { label: "Textarea", type: "textarea" },
@@ -26,7 +26,7 @@ export default {
             ]
         },
 
-        // {
+         // {
         //     label: "Checkbox group",
         //     type: "checkbox-group",
         //     values: [
@@ -92,4 +92,14 @@ export default {
         //     }
         // },
     ],
+
+    formFields: [],
+
+    populate(data) {
+        for (var variableKey in data) {
+            if (this.formFields.hasOwnProperty(variableKey)) {
+                this.formFields[variableKey] = data[variableKey]
+            }
+        }
+    }
 }

@@ -15,15 +15,15 @@ export default {
 @import "./../../../node_modules/uikit/src/scss/mixins-theme.scss";
 @import "./../../../node_modules/uikit/src/scss/uikit-theme.scss";
 
-#breadcrumbs ul{
+#breadcrumbs ul, #notices ul{
   padding: 0;
   margin: 0;
 }
 
 .fade-enter-active, .fade-leave-active {
-    transition: opacity .5s
-  }
-  .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
-    opacity: 0
-  }
+  transition: opacity .5s
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0
+}
 </style>

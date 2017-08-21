@@ -1,5 +1,5 @@
 <template lang="pug">
-section
+div
     ul( uk-tab="animation: uk-animation-fade")
         li
             a( href="#") Form
@@ -7,7 +7,6 @@ section
             a( href="#") Settings
         li
             a( href="#") Entries
-
 
     ul.uk-switcher
         li
@@ -21,7 +20,10 @@ section
                 :form-settings="payload.formSettings", :form-fields="payload.formFields"
             )
         li
-            entries
+            entries(
+                v-if="payload.formEntries"
+                :form-entries="payload.formEntries"
+            )
 </template>
 
 <script>
@@ -37,14 +39,16 @@ export default {
         return {
             payload: {
                 formFields: null,
-                formSettings: null
+                formSettings: null,
+                formEntries: null,
             }
         }
     },
     mounted(){
         axios.post("/admin/setup/dynamicforms/getform?id=" + this.$route.params.id).then((response) => {
-            this.payload.formFields = JSON.parse(response.data.formFields)
-            this.payload.formSettings = response.data.formSettings.length ? JSON.parse(response.data.formSettings) : {}
+            this.payload.formFields = response.data.formFields
+            this.payload.formSettings = response.data.formSettings
+            this.payload.formEntries = response.data.formEntries
         })
     }
 }

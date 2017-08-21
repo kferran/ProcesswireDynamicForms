@@ -15,4 +15,4 @@ setTimeout(() => {
       router,
       render: h => h(App)
     })
-}, 10)
+}, 100)

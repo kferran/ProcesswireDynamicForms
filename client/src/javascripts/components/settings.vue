@@ -1,19 +1,21 @@
 <template lang="pug">
-section
-    form.uk-form-stacked( v-if="model")
+div
+    form.uk-form-stacked( v-if="Settings")
         ul.uk-list.uk-list-divider( uk-accordion)
             li
                 div.uk-accordion-title Email addresses to send form results to
                 div.uk-accordion-content
-                    p To email one person each form submission, enter their email in the field below.
-                    div.uk-margin
-                        label.uk-form-label To:
-                        input.uk-input( v-model="model.to" type="text")
 
-                    div.uk-margin( v-if="formFields")
-                        hr
-                        p Conditionally email an address based on the value of a field below.
-                        div.uk-flex.uk-flex-middle( v-for="item in model.conditionalTos")
+                    section
+                        p To email one person each form submission, enter their email in the field below.
+                        div
+                            label.uk-form-label To:
+                            input.uk-input( v-model="Settings.to" type="text")
+                    hr
+
+                    section
+                        p Conditionally email an address based on the value of a select field below.
+                        div.uk-flex.uk-flex-middle( v-for="item in Settings.conditionalTos")
                             div.uk-card.uk-card-body.uk-card-small
                                 span If field
                             div.uk-card.uk-card-body.uk-card-small
@@ -40,59 +42,68 @@ section
                         button.uk-button.uk-button-default.uk-button-primary( @click.prevent="addConditionalTo") Add
 
             li
+                div.uk-accordion-title Email from field
+                div.uk-accordion-content
+                    section
+                        p When emailing a form submission to you, we can optionally make the "From" line contain an email address entered in the form (assuming you have an Email field present). Select which field will contain the submitter's email address.
+                        div.uk-margin
+                            select.uk-select( v-model="Settings.from")
+                                option( v-for="formItem in formFields") {{ formItem.label }}
+
+                    hr
+                    section
+                        p If no conditions apply to who emails should be from, fill in the field below.
+                        div
+                            label.uk-form-label From:
+                            input.uk-input( v-model="Settings.from" type="text")
+
+            li
                 div.uk-accordion-title Subject line
                 div.uk-accordion-content
                     section
-                        div.uk-margin
-                            label.uk-form-label Email Subject:
-                            input.uk-input(
-                                v-model="model.subject"
-                                type="text"
-                            )
+                        label.uk-form-label Email Subject:
+                        input.uk-input(
+                            v-model="Settings.subject"
+                            type="text"
+                        )
 
-        div.uk-margin.uk-text-right
-            button.uk-button.uk-button-default.uk-button-primary( @click.prevent="save()") Save
+        div.uk-section.uk-text-right
+            button.uk-button.uk-button-default.uk-button-primary( @click.prevent="save()") Save Settings
 </template>
 
 <script>
 import axios from 'axios'
+import UIkit from 'uikit'
+import Settings from './../entities/Settings'
 export default {
     name: 'Settings',
     props: ['formSettings', 'formFields'],
     data() {
         return {
-            model: null
+            Settings: Settings
         }
     },
     mounted(){
         this.$nextTick(() =>  {
-            this.model = this.formSettings ? this.formSettings : {
-                subject: null,
-                to: null,
-                conditionalTos: [{
-                    field: null,
-                    to: null
-                }]
-            }
+            this.Settings.populate(this.formSettings)
         });
     },
     methods:{
         addConditionalTo(){
-            this.model.conditionalTos.push({
+            this.Settings.conditionalTos.push({
                 to: null,
                 field: null
             })
         },
         save(){
-
-            // console.log(this.formSettings)
             let data = {
-                id: this.$route.params.id,
-                data: JSON.stringify(this.model)
+                formId: this.$route.params.id,
+                data: JSON.stringify(this.Settings)
             }
 
             axios.post('/admin/setup/dynamicforms/saveFormSettings', data).then((response) => {
                 console.log(response.data)
+                UIkit.modal.alert('Saved!')
             })
         }
     }

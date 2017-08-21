@@ -3,21 +3,19 @@ div
 	form.uk-form.uk-form-stacked
 		div.uk-grid
 			div.uk-width-1-4
-				div.uk-card.uk-card-default.uk-card-small
-					div.uk-card-body
-						draggable.uk-list.uk-list-divider(
-							element="ul"
-							:list="components"
-							:options="componentsOptions"
-							:clone="onClone"
-						)
-							li.collection-item( v-for="component in components")
-								i(:class='getIcon(component.type)')
-								|  {{component.label}}
+				draggable.uk-list.uk-list-divider(
+					element="ul"
+					:list="components"
+					:options="componentsOptions"
+					:clone="onClone"
+				)
+					li.collection-item( v-for="component in components")
+						i(:class='getIcon(component.type)')
+						|  {{component.label}}
 
 			div.uk-width-3-4
 				section
-					draggable(
+					draggable.uk-list.uk-list-divider(
 						v-if="formFields"
 						element='ul',
 						data-collapsible='accordion',
@@ -30,7 +28,7 @@ div
 						@end='isDragging=false',
 						data-content='Drag and drop your fields here'
 					)
-						li.uk-card.uk-card-small.uk-card-default.uk-card-body(
+						li(
 							v-for='(item, index) in formFields',
 							:key='index'
 						)
@@ -47,30 +45,28 @@ div
 								div.uk-form.uk-form-stacked
 									div.uk-margin.uk-grid-small.uk-child-width-auto.uk-grid
 										label(:for="item.name + '-required'")
-											input.uk-checkbox(type='checkbox', :id="item.name + '-required'", :checked='item.required', @click.stop='item.required = !item.required')
+											input.uk-checkbox(
+												type='checkbox',
+												:id="item.name + '-required'",
+												:checked='item.required',
+												@click.stop='item.required = !item.required'
+											)
 											|  Required
 
 									div.uk-margin
 										label.uk-form-label(:for="item.name + '-label'") Label
 										input.uk-input(:id="item.name + '-label'", type='text', v-model='item.label')
 
+									div.uk-margin
+										label.uk-form-label Width
+										select.uk-select( v-model="item.width")
+											option( v-for="width in widths" :value="width.value") {{ width.label }}
+
 									div(v-if="['text', 'password', 'email'].includes(item.type)")
 										div.uk-margin
 											label.uk-form-label Type
 											select.uk-select(v-model='item.type')
 												option(v-for='(option, index) in optionType', :key='index', :value='option.value') {{option.label}}
-
-										div.uk-margin
-											label.uk-form-label Width
-											div.uk-margin.uk-grid-small.uk-child-width-auto.uk-grid
-												label( v-for="width in widths")
-													input.uk-radio(
-														type="radio"
-														:name="item.name+ '-width'"
-														value="uk-width-1-1"
-														v-model="width.value"
-													)
-													|  {{ width.label}}
 
 									div(v-if="['checkbox-group', 'radio-group', 'select'].includes(item.type)")
 										label.uk-form-label Values
@@ -97,11 +93,8 @@ div
 										div.uk-margin
 											a( @click.stop='addOption(item.values)') Add option
 
-
-
 		div.uk-section.uk-section-small.uk-text-right
-			a.uk-button.uk-button-default.uk-button-danger.uk-margin-small-right( @click.stop="clearItems()") Clear
-			button.uk-button.uk-button-default.uk-button-primary( @click.prevent="save()") Save
+			button.uk-button.uk-button-default.uk-button-primary( @click.prevent="save()") Save Form
 
 </template>
 
@@ -188,10 +181,7 @@ export default {
 			return this.icons[type];
 		},
 		save(){
-			axios.post('/admin/setup/dynamicforms/saveFormFields', { id: this.$route.params.id, formFields: this.listString }).then((response) => {
-				console.log(response.data)
-			})
-			console.log(this.listString)
+			axios.post('/admin/setup/dynamicforms/saveFormFields', { id: this.$route.params.id, formFields: this.listString })
 		}
 	},
 	computed: {
@@ -242,8 +232,7 @@ export default {
 
 	.dropArea {
 		position: relative;
-		min-height: 440px;
-		padding: 10px 0;
+		min-height: 350px;
 	}
 
 	.dropArea.empty {

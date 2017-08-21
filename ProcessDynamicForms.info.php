@@ -31,12 +31,12 @@ $info = array(
 	'href' => '',
 
 	// name of permission required of users to execute this Process (optional)
-	'permission' => 'dynamicforms',
+	// 'permission' => 'dynamicforms',
 
 	// permissions that you want automatically installed/uninstalled with this module (name => description)
-	'permissions' => array(
-		'dynamicforms' => 'Run the Dynamic Forms module'
-	),
+	// 'permissions' => array(
+	// 	'dynamicforms' => 'Run the Dynamic Forms module'
+	// ),
 
 	// page that you want created to execute this module
 	'page' => array(

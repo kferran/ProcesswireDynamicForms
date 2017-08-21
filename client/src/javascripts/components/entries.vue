@@ -1,46 +1,33 @@
 <template lang="pug">
-section
-    vue-good-table(
-        title=""
-        :columns="columns"
-        :rows="rows"
-        :paginate="true"
-        :lineNumbers="true"
-        styleClass="uk-table uk-table-divider uk-table-striped uk-table-hover uk-table-small"
-    )
-        template( slot="table-row" scope="props")
-            td
-                router-link(
-                    to="/form"
-                ) Edit
-            td {{ props.row.name }}
+div
+    ul.uk-list.uk-list-divider( uk-accordion)
+        li( v-for="entry in formEntries")
+            div.uk-accordion-title {{ entry.title }}
+            div.uk-accordion-content
+                section.uk-card
+                    form.uk-form-stacked
+                        div.uk-margin( v-for="item in entry.fields")
+                            label.uk-form-label {{ item.label }}
+                            div.uk-form-controls
+                                input.uk-input(
+                                    v-if="item.type != 'textarea'"
+                                    :value="item.value"
+                                    disabled
+                                )
+                                textarea.uk-textarea(
+                                    v-if="item.type == 'textarea'"
+                                    :value="item.value"
+                                    rows="5"
+                                    disabled
+                                )
 </template>
 
 <script>
 export default {
     name: 'Entries',
-     data(){
-        return {
-            searchTerm: '',
-            onClickFn(){
-                console.log('something');
-            },
-            columns: [
-                {
-                    label: 'Action',
-                    field: 'id'
-                },
-                {
-                    label: 'Form',
-                    field: 'name',
-                }
-            ],
-            rows: [
-                {id:1, name:"Contact Us"},
-                {id:1, name:"Volunteer"},
-                {id:1, name:"Advocates"},
-            ],
-        }
+    props: ['formEntries'],
+    data(){
+        return {}
     },
 }
 </script>
