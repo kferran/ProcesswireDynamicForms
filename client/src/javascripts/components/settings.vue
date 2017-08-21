@@ -102,7 +102,6 @@ export default {
             }
 
             axios.post('/admin/setup/dynamicforms/saveFormSettings', data).then((response) => {
-                console.log(response.data)
                 UIkit.modal.alert('Saved!')
             })
         }

@@ -103,6 +103,7 @@ import draggable from 'vuedraggable'
 import VueFormRender from './VueFormRender.vue'
 import fieldTypes from './field-types'
 import axios from 'axios'
+import UIkit from 'uikit'
 export default {
 	name: 'vue-form',
 	components: { draggable, VueFormRender },
@@ -163,7 +164,9 @@ export default {
 			return input
 		},
 		destroy (index) {
-			this.formFields.splice(index, 1)
+			UIkit.modal.confirm('Are you sure!').then(() =>  {
+				this.formFields.splice(index, 1)
+			})
 		},
 		addOption (values) {
 			values.push({
@@ -249,12 +252,5 @@ export default {
 		top: 50%;
 		left: 0;
 		width: 100%;
-	}
-
-	.uk-accordion-title{
-		font-size:16px;
-	}
-	.uk-card-small{
-		padding: 10px !important;
 	}
 </style>

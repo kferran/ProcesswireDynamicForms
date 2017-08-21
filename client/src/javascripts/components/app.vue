@@ -20,6 +20,10 @@ export default {
   margin: 0;
 }
 
+.uk-accordion-title{
+		font-size:16px;
+	}
+
 .fade-enter-active, .fade-leave-active {
   transition: opacity .5s
 }

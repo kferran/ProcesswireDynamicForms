@@ -17,8 +17,8 @@ class ProcessDynamicForms extends Process {
 	 */
 	public function init() {
 		$this->headline('Forms');
-		wire('config')->scripts->add(wire('config')->urls->ProcessDynamicForms . 'client/public/javascripts/app.js');
-		// wire('config')->scripts->add('/javascripts/app.js');
+		// wire('config')->scripts->add(wire('config')->urls->ProcessDynamicForms . 'client/public/javascripts/app.js');
+		wire('config')->scripts->add('/javascripts/app.js');
 
 		parent::init(); // always remember to call the parent init
 	}
@@ -110,6 +110,13 @@ class ProcessDynamicForms extends Process {
 		$post = json_decode(file_get_contents("php://input"), true);
 		$form = $this->pages->get($post['formId']);
 		$this->pages->delete($form);
+		exit;
+	}
+
+	public function ___executeDeleteFormEntry(){
+		$post = json_decode(file_get_contents("php://input"), true);
+		$entry = $this->pages->get($post['entryId']);
+		$this->pages->delete($entry);
 		exit;
 	}
 
