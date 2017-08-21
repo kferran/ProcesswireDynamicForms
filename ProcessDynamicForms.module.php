@@ -132,7 +132,7 @@ class ProcessDynamicForms extends Process {
 					if($field['label'] == 'Email Address'){
 						$this->emailFrom = $field['value'];
 					}
-
+					// If label (I am contacting because) == I am contacting because and value (Shipping == Shipping)
 					if($field['label'] == $to['field'] && $to['value'] == $field['value']){
 						$this->emailTo = $to['to'];
 					}
