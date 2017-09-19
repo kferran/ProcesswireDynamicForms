@@ -25,49 +25,48 @@ export default {
                 }
             ]
         },
-
-        // {
-        //     label: "Checkbox group",
-        //     type: "checkbox-group",
-        //     values: [
-        //         {
-        //             label: "Option 1",
-        //             value: "option-1",
-        //             selected: false
-        //         },
-        //         {
-        //             label: "Option 2",
-        //             value: "option-2",
-        //             selected: false
-        //         },
-        //         {
-        //             label: "Option 3",
-        //             value: "option-3",
-        //             selected: false
-        //         }
-        //     ]
-        // },
-        // {
-        //     label: "Radio group",
-        //     type: "radio-group",
-        //     values: [
-        //         {
-        //             label: "Option 1",
-        //             value: "option-1",
-        //             selected: false
-        //         },
-        //         {
-        //             label: "Option 2",
-        //             value: "option-2",
-        //             selected: false
-        //         },
-        //         {
-        //             label: "Option 3",
-        //             value: "option-3",
-        //             selected: false
-        //         }
-        //     ]
-        // },
+        {
+            label: "Checkbox group",
+            type: "checkbox-group",
+            values: [
+                {
+                    label: "Option 1",
+                    value: "option-1",
+                    selected: false
+                },
+                {
+                    label: "Option 2",
+                    value: "option-2",
+                    selected: false
+                },
+                {
+                    label: "Option 3",
+                    value: "option-3",
+                    selected: false
+                }
+            ]
+        },
+        {
+            label: "Radio group",
+            type: "radio-group",
+            values: [
+                {
+                    label: "Option 1",
+                    value: "option-1",
+                    selected: false
+                },
+                {
+                    label: "Option 2",
+                    value: "option-2",
+                    selected: false
+                },
+                {
+                    label: "Option 3",
+                    value: "option-3",
+                    selected: false
+                }
+            ]
+        },
         // {
         //     label: "File input",
         //     type: "file",

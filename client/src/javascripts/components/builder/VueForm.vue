@@ -133,9 +133,12 @@ export default {
 			],
 			icons:{
 				'checkbox': "fa fa-check-square-o fa-lg",
+				'checkbox-group': "fa fa-check-square-o fa-lg",
 				'text': "fa fa-pencil fa-lg",
 				'textarea': "fa fa-pencil-square-o fa-lg",
 				'select': 'fa fa-list fa-lg',
+				'file': 'fa fa-file fa-lg',
+				'radio-group': 'fa fa-dot-circle-o fa-lg',
 			},
 			isDragging: false,
 			delayedDragging:false
@@ -184,7 +187,9 @@ export default {
 			return this.icons[type];
 		},
 		save(){
-			axios.post('/admin/setup/dynamicforms/saveFormFields', { id: this.$route.params.id, formFields: this.listString })
+			axios.post('/admin/setup/dynamicforms/saveFormFields', { id: this.$route.params.id, formFields: this.listString }).then(() => {
+				UIkit.modal.alert('Saved!')
+			})
 		}
 	},
 	computed: {

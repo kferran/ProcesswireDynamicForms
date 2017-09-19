@@ -16,9 +16,9 @@ class ProcessDynamicForms extends Process {
 	 *
 	 */
 	public function init() {
-		$this->headline('Forms');
-		// wire('config')->scripts->add(wire('config')->urls->ProcessDynamicForms . 'client/public/javascripts/app.js');
-		wire('config')->scripts->add('/javascripts/app.js');
+		$this->headline(' ');
+		wire('config')->scripts->add(wire('config')->urls->ProcessDynamicForms . 'client/public/javascripts/app.js');
+		// wire('config')->scripts->add('/javascripts/app.js');
 
 		parent::init(); // always remember to call the parent init
 	}
@@ -57,17 +57,21 @@ class ProcessDynamicForms extends Process {
 		$page = $this->pages->get("id=$formId");
 		$entries = [];
 		if($page->hasChildren()) {
-			foreach ($page->children() as $entry) {
+			foreach ($page->children("sort=-sort") as $entry) {
 				$formEntry = json_decode($entry->dynamic_form_entry);
 				$entries[] = [
 					'title' => $entry->title,
 					'id' => $entry->id,
+					'created' => date('Y/m/d h:i:sa', $entry->created),
 					'fields' => $formEntry->formFields
 				];
 			}
+
+
 		}
 
 		echo json_encode([
+			'formTitle' => $page->title,
 			'formSettings' => $page->dynamic_form_settings ? json_decode($page->dynamic_form_settings) : [],
 			'formFields' => $page->dynamic_form_fields ? json_decode($page->dynamic_form_fields) : [],
 			'formEntries' => $entries,
@@ -125,23 +129,41 @@ class ProcessDynamicForms extends Process {
 
 		if($data['formSettings']){
 			$this->emailSubject = $data['formSettings']['subject'];
+			$this->emailTo = $data['formSettings']['to'] ? $data['formSettings']['to'] : '';
+			$this->emailFrom = $data['formSettings']['from'] ? $data['formSettings']['from'] : '';
 
-			if($data['formSettings']['to']){
-				$this->emailTo = $data['formSettings']['to'];
-			}
-
-			if($data['formSettings']['from']){
-				$this->emailFrom = $data['formSettings']['from'];
-			}
-
-			foreach ($data['formSettings']['conditionalTos'] as $to) {
+			if($data['formSettings']['conditionalSubject']){
+				$email = '';
+				$subject = '';
 				foreach ($data['formFields'] as $field) {
-					if($field['label'] == 'Email Address'){
+					if($field['type'] == 'email'){
+						$email = $field['value'];
+					}
+
+					if($field['label'] == $data['formSettings']['conditionalSubject']){
+						$subject = $field['value'];
+					}
+
+					$this->emailSubject = $subject . ' ('. $email .')';
+				}
+			}
+
+			if($data['formSettings']['conditionalFrom'] && !$data['formSettings']['from']){
+				foreach ($data['formFields'] as $field) {
+					// @TODO patch lookup of email field
+					if($field['type'] == 'email'){
 						$this->emailFrom = $field['value'];
 					}
-					// If label (I am contacting because) == I am contacting because and value (Shipping == Shipping)
-					if($field['label'] == $to['field'] && $to['value'] == $field['value']){
-						$this->emailTo = $to['to'];
+				}
+			}
+
+			if($data['formSettings']['conditionalTos']){
+				foreach ($data['formSettings']['conditionalTos'] as $to) {
+					foreach ($data['formFields'] as $field) {
+						// If label (I am contacting because) == I am contacting because and value (Shipping == Shipping)
+						if($field['label'] == $to['field'] && $to['value'] == $field['value']){
+							$this->emailTo = $to['to'];
+						}
 					}
 				}
 			}

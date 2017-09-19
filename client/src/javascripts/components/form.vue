@@ -1,5 +1,6 @@
 <template lang="pug">
 div
+    p.uk-text-large.uk-margin-remove-top {{ payload.formTitle }}
     ul( uk-tab="animation: uk-animation-fade")
         li
             a( href="#") Form
@@ -46,6 +47,7 @@ export default {
     },
     mounted(){
         axios.post("/admin/setup/dynamicforms/getform?id=" + this.$route.params.id).then((response) => {
+            this.payload.formTitle = response.data.formTitle
             this.payload.formFields = response.data.formFields
             this.payload.formSettings = response.data.formSettings
             this.payload.formEntries = response.data.formEntries

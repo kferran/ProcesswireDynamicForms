@@ -3,6 +3,8 @@ export default{
     to: null,
     from: null,
     conditionalTos: [{ field: null, to: null}],
+    conditionalFrom: { field: null },
+    conditionalSubject: null,
 
     populate(data) {
         for (var variableKey in data) {

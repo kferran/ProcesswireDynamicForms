@@ -3,7 +3,7 @@ div
     ul.uk-list.uk-list-divider( uk-accordion)
         li( v-for="(entry, index) in formEntries")
             div.uk-accordion-title.uk-position-relative
-                | {{ entry.title }}
+                | {{ entry.title }} - {{ entry.created }}
                 i.fa.fa-trash-o.fa-lg.uk-position-absolute(
                     style="right:35px; top:5px; margin:auto;"
                     @click.prevent='deleteEntry(entry, index)',
@@ -14,8 +14,27 @@ div
                         div.uk-margin( v-for="item in entry.fields")
                             label.uk-form-label {{ item.label }}
                             div.uk-form-controls
+                                div( v-if="item.type == 'checkbox-group'")
+                                    label.uk-margin-small-right( v-for="option in item.values")
+                                        input.uk-checkbox(
+                                            type="checkbox"
+                                            :value="option.value"
+                                            v-model="option.selected"
+                                        )
+                                        |  {{ option.label }}
+
+                                div( v-if="item.type == 'radio-group'")
+                                    label.uk-margin-small-right( v-for="option in item.values")
+                                        input.uk-radio(
+                                            type="radio"
+                                            :value="option.value"
+                                            v-model="option.selected"
+                                        )
+                                        |  {{ option.label }}
+
+
                                 input.uk-input(
-                                    v-if="item.type != 'textarea'"
+                                    v-if="['text','checkbox', 'select'].includes(item.type ) "
                                     :value="item.value"
                                     disabled
                                 )
